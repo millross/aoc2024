@@ -26,9 +26,6 @@ def part_1(file_name: str) -> int:
     zipped = list(zip(left, right))
     return sum(map(lambda t: abs(t[0] - t[1]), zipped))
 
-def get_count_of(counts: dict, value: int) -> int:
-    return counts.get(value, 0)
-
 def part_2(file_name: str) -> int:
     left, right = _load_lists(file_name)
     counts = Counter(right)
