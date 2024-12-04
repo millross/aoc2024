@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+
 def load_file(filename):
     loaded = list()
 
@@ -14,3 +17,8 @@ def read_file(filename: str) -> str:
         loaded = loaded + line.rstrip()
     input_file.close()
     return loaded
+
+@dataclass
+class Position:
+    x: int
+    y: int
