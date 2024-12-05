@@ -18,7 +18,17 @@ def read_file(filename: str) -> str:
     input_file.close()
     return loaded
 
-@dataclass
+@dataclass(frozen=True)
+class Direction:
+    x_unit: int
+    y_unit: int
+
+@dataclass(frozen=True)
 class Position:
     x: int
     y: int
+
+    def moved(self, dir: Direction, units: int):
+        return Position(x=self.x + (dir.x_unit * units), y=self.y + (dir.y_unit * units))
+
+

@@ -1,7 +1,10 @@
-from common.aoc_2024_common import load_file,
+from common.aoc_2024_common import load_file, Direction, Position
 from typing import Tuple
 
-DIRECTIONS: [Tuple[int,int]] = [[-1,-1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]
+DIRECTIONS: [Direction] = [Direction(-1, -1), Direction(0, -1), Direction(1, -1),
+                           Direction(-1, 0), Direction(1, 0),
+                           Direction(-1, 1), Direction(0, 1), Direction(1, 1)]
+TARGET: str = "XMAS"
 
 class Grid:
 
@@ -14,14 +17,32 @@ class Grid:
     def width(self) -> int:
         return len(self._lines[0])
 
-    def char_at(self, x, y) -> str:
-        if x < 0 or x >= self.width():
+    def char_at(self, position: Position) -> str:
+        if position.x < 0 or position.x >= self.width():
             return "."
-        if y < 0 or y >= self.height():
+        if position.y < 0 or position.y >= self.height():
             return "."
-        return self._lines[y][x]
+        return self._lines[position.y][position.x]
 
-class CandidateAssessor()
+class CandidateAssessor:
+    def __init__(self, grid: Grid, position: Position):
+        self.grid = grid
+        self.position = position
+
+    def __check_in_direction_(self, direction: Direction) -> bool:
+        for i in range(0, len(TARGET)):
+            c = self.grid.char_at(self.position.moved(direction, i))
+            if c != TARGET[i]:
+                return False
+        return True
+
+    # Count how many "XMAS"s start from this position
+    def check(self) -> int:
+        if self.grid.char_at(self.position) != TARGET[0]:
+            return 0
+        # Test all directions from this position
+        results
+        DIRECTIONS.map(lambda d:)
 
 class Searcher:
 
