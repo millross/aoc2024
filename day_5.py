@@ -57,12 +57,16 @@ def convert_ordering_str_to_list(ordering: str) -> [int]:
 def middle_page_number(ordering: [int]) -> int:
     return ordering[floor(len(ordering) / 2)]
 
-def part_1(file_name):
+def load_orderings_and_specification(file_name: str) -> [OrderingSpecification, [[int]]]:
     ordering_rules: str
     page_orderings_strs: str
     [ordering_rules, page_orderings_strs] = load_file_inputs(file_name)
     page_orderings: [[int]] = list(map(convert_ordering_str_to_list, page_orderings_strs))
     ordering_specification: OrderingSpecification = OrderingSpecification(list(map(OrderingRuleDefinition, ordering_rules)))
+    return ordering_specification, page_orderings
+
+def part_1(file_name):
+    ordering_specification, page_orderings = load_orderings_and_specification(file_name)
     compliant_orderings = filter(lambda o: page_ordering_complies_with_specification(o, ordering_specification), page_orderings)
     middle_page_numbers = map(middle_page_number, compliant_orderings)
     return sum(middle_page_numbers)
@@ -76,3 +80,5 @@ def test_compliance():
 
 print("Part 1 test result: " + str(part_1(TEST_FILE_NAME)))
 print("Part 1 actual result: " + str(part_1(ACTUAL_FILE_NAME)))
+
+# def part_2(file_name):
