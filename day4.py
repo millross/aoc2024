@@ -11,6 +11,9 @@ TARGET: str = "XMAS"
 TEST_FILE_NAME = "day4_test_input.txt"
 ACTUAL_FILE_NAME = "day4_actual_input.txt"
 
+DIAGONAL_DIRECTIONS: [Direction] = [Direction(-1, -1), Direction(1, -1), Direction(-1, 1), Direction(1, 1)]
+OPPOSING_LETTERS: dict[str, str] = { "M": "S", "S": "M"}
+
 @dataclass(frozen=True)
 class Grid:
 
@@ -63,10 +66,55 @@ class Searcher:
 
         return instance_count
 
+
+def opposite_diagonal_direction(direction: Direction) -> Direction:
+    return Direction(x_unit=(-1 * direction.x_unit), y_unit=(-1 * direction.y_unit))
+
+
 class Part2CandidateAssessor:
     # Look for two "MAS" in shape of an X with A in centre of group of 9
+    def __init__(self, grid: Grid, position: Position) -> None:
+        self.grid = grid
+        self.position = position
+
+    def __opposing_letter__(self, position: Position, direction: Direction, letter: str):
+        return self.grid.char_at(position.moved(opposite_diagonal_direction(direction))) == OPPOSING_LETTERS[letter]
+
+    def check_is_xmas(self) -> bool:
+        if not self.grid.char_at(self.position) == "A":
+            return False
+        for direction in DIAGONAL_DIRECTIONS[:2]:
+            corner_char: str = self.grid.char_at(self.position.moved(direction))
+            if corner_char not in OPPOSING_LETTERS:
+                return False
+            if not self.__opposing_letter__(self.position, direction, corner_char):
+                return False
+
+        return True
+
+@dataclass(frozen=True)
+class Part2Searcher:
+
+    grid: Grid
+
+    def count_instances(self) -> int:
+        instance_count: int = 0
+        for y in range(0, self.grid.height()):
+            for x in range(0, self.grid.width()):
+                assessor: Part2CandidateAssessor= Part2CandidateAssessor(self.grid, Position(x, y))
+                if assessor.check_is_xmas() == 1:
+                    instance_count += 1
+
+        return instance_count
+
+
 
 part_1_test_result = Searcher(grid=Grid(load_file(TEST_FILE_NAME)), word=TARGET).count_instances()
 print("Part 1 Test result = " + str(part_1_test_result))
 part_1_actual_result = Searcher(grid=Grid(load_file(ACTUAL_FILE_NAME)), word=TARGET).count_instances()
 print("Part 1 Actual result = " + str(part_1_actual_result))
+part_2_test_result = Part2Searcher(grid=Grid(load_file(TEST_FILE_NAME))).count_instances()
+print("Part 2 Test Result = " + str(part_2_test_result))
+part_2_actual_result = Part2Searcher(grid=Grid(load_file(ACTUAL_FILE_NAME))).count_instances()
+print("Part 2 Actual Result = " + str(part_2_actual_result))
+

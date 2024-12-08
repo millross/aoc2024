@@ -28,7 +28,7 @@ class Position:
     x: int
     y: int
 
-    def moved(self, dir: Direction, units: int):
+    def moved(self, dir: Direction, units: int = 1):
         return Position(x=self.x + (dir.x_unit * units), y=self.y + (dir.y_unit * units))
 
 
