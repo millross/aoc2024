@@ -1,8 +1,9 @@
-from operator import truediv
-
-from common.aoc_2024_common import load_file, group_by_delimiter
 import itertools as it
+
+from typing import Callable
+from common.aoc_2024_common import load_file, group_by_delimiter
 from math import floor
+from functools import cmp_to_key
 
 TEST_FILE_NAME: str = "day5_test_input.txt"
 ACTUAL_FILE_NAME: str = "day5_actual_input.txt"
@@ -34,7 +35,6 @@ class OrderingSpecification:
         self.specification = {}
         for k, g in it.groupby(ordering_rules, lambda r: r.before):
             self.specification[k] = set(map(lambda r: r.after, g))
-        print(self.specification)
 
     def is_compliant(self, earlier: int, later: int):
         # for x in self.specification:
@@ -71,7 +71,30 @@ def part_1(file_name):
     middle_page_numbers = map(middle_page_number, compliant_orderings)
     return sum(middle_page_numbers)
 
+def specified_ordering_compare(ordering_rules: dict[int, set[int]], left: int, right: int):
+    must_appear_before: [int] = ordering_rules.get(left, [])
+    if right in must_appear_before:
+        return -1
+    else:
+        if left in ordering_rules.get(right, []):
+            return 1
+    # Not sure that this should happen but neither must appear before the other so we're good
+    return 0
 
+def specified_ordering_comparator(ordering_rules: dict[int, set[int]]) -> Callable[[int, int], int]:
+    return lambda l, r: specified_ordering_compare(ordering_rules=ordering_rules, left=l, right=r)
+
+def fix_ordering(ordering: [int], spec:dict[int, set[int]]):
+    return sorted(ordering, key=cmp_to_key(specified_ordering_comparator(spec)))
+
+def part_2(file_name):
+    ordering_specification, page_orderings = load_orderings_and_specification(file_name)
+    ordering_specification, page_orderings = load_orderings_and_specification(file_name)
+    non_compliant_orderings = list(filter(lambda o: not page_ordering_complies_with_specification(o, ordering_specification), page_orderings))
+
+    fixed_page_orderings = map(lambda ordering: fix_ordering(ordering=ordering, spec=ordering_specification.specification), non_compliant_orderings)
+    middle_values = map(middle_page_number, fixed_page_orderings)
+    return sum(middle_values)
 
 def test_compliance():
     [ordering_rules, page_orderings] = load_file_inputs(TEST_FILE_NAME)
@@ -81,4 +104,5 @@ def test_compliance():
 print("Part 1 test result: " + str(part_1(TEST_FILE_NAME)))
 print("Part 1 actual result: " + str(part_1(ACTUAL_FILE_NAME)))
 
-# def part_2(file_name):
+print("Part 2 test result: " + str(part_2(TEST_FILE_NAME)))
+print("Part 2 actual result: " + str(part_2(ACTUAL_FILE_NAME)))

@@ -1,10 +1,7 @@
 from dataclasses import dataclass
-
-
-def load_file(filename):
 import itertools as it
 
-def load_file(filename) -> [str]:
+def load_file(filename):
     loaded = list()
 
     input_file = open(filename)
