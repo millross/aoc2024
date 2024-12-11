@@ -34,4 +34,21 @@ class Position:
     def moved(self, dir: Direction, units: int = 1):
         return Position(x=self.x + (dir.x_unit * units), y=self.y + (dir.y_unit * units))
 
+@dataclass(frozen=True)
+class Grid:
 
+    lines:[str]
+    default_char: str = "."
+
+    def height(self) -> int:
+        return len(self.lines)
+
+    def width(self) -> int:
+        return len(self.lines[0])
+
+    def char_at(self, position: Position) -> str:
+        if position.x < 0 or position.x >= self.width():
+            return self.default_char
+        if position.y < 0 or position.y >= self.height():
+            return self.default_char
+        return self.lines[position.y][position.x]
